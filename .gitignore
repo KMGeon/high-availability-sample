@@ -35,3 +35,16 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+# 로그 파일 제외
+*.log
+logs/
+
+# 환경 설정 파일 제외
+application-*.yml
+application-*.properties
+
+# OS 관련 파일 제외
+.DS_Store
+Thumbs.db
