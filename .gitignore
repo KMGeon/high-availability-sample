@@ -42,6 +42,7 @@ out/
 logs/
 
 # 환경 설정 파일 제외
+application*.yml
 application-*.yml
 application-*.properties
 
