@@ -42,9 +42,8 @@ out/
 logs/
 
 # 환경 설정 파일 제외
-application*.yml
-application-*.yml
-application-*.properties
+**/application.yml
+**/application-*.yml
 
 # OS 관련 파일 제외
 .DS_Store
