@@ -47,4 +47,14 @@ public class Snowflake {
 		}
 		return currentTimestamp;
 	}
+
+	@Override
+	public String toString() {
+		return "Snowflake{" +
+				"nodeId=" + nodeId +
+				", startTimeMillis=" + startTimeMillis +
+				", lastTimeMillis=" + lastTimeMillis +
+				", sequence=" + sequence +
+				'}';
+	}
 }
