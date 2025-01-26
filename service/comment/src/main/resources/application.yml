@@ -1,2 +1,23 @@
 server:
   port: 9001
+
+spring:
+  application:
+    name: board-comment-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/KMG?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/KMG?serverTimezone=Asia/Seoul # comment로 변경
+    username: root
+    password: 1234
+
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
