@@ -1,122 +1,48 @@
 package me.geon.artice.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import me.geon.artice.ApiResponse;
 import me.geon.artice.config.WebTestConfigure;
+import me.geon.artice.data.DataInitializer;
 import me.geon.artice.service.request.ArticleCreateRequest;
-import me.geon.artice.service.request.ArticleUpdateRequest;
 import me.geon.artice.service.response.ArticleResponse;
-import org.junit.jupiter.api.Test;
-import org.springframework.web.client.RestClient;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ArticleControllerTest extends WebTestConfigure {
 
-    RestClient restClient = RestClient.create("http://localhost:9000");
-
-    @Test
-    void createTest() {
-
-    }
-
-    ArticleResponse create(ArticleCreateRequest request) {
-        return restClient.post()
-                .uri("/v1/articles")
-                .body(request)
-                .retrieve()
-                .body(ArticleResponse.class);
+    @BeforeEach
+    void setUp() throws Exception {
+        super.setup();
     }
 
     @Test
-    void readTest() {
-        ArticleResponse response = read(121530268440289280L);
-        System.out.println("response = " + response);
-    }
+    @DisplayName("POST /v1/articles 게시글 생성 200 OK")
+    public void 새로운_게시글을_생성한다() throws Exception {
+        // given
+        ArticleCreateRequest article = fixtureMonkey.giveMeBuilder(ArticleCreateRequest.class)
+                .set("boardId", 1L)
+                .set("writerId", 1L)
+                .sample();
+        // when
+        ApiResponse<ArticleResponse> rtn = articleApiCaller.createArticle(article, 200);
 
-    ArticleResponse read(Long articleId) {
-        return restClient.get()
-                .uri("/v1/articles/{articleId}", articleId)
-                .retrieve()
-                .body(ArticleResponse.class);
-    }
-
-    @Test
-    void updateTest() {
-        update(121530268440289280L);
-        ArticleResponse response = read(121530268440289280L);
-        System.out.println("response = " + response);
-    }
-
-    void update(Long articleId) {
-        restClient.put()
-                .uri("/v1/articles/{articleId}", articleId)
-                .retrieve();
+        // then
+        assertThat(rtn.getData())
+                .extracting("title", "content", "boardId", "writerId")
+                .containsExactly(article.getTitle(), article.getContent(), article.getBoardId(), article.getWriterId());
     }
 
     @Test
-    void deleteTest() {
-        restClient.delete()
-                .uri("/v1/articles/{articleId}", 121530268440289280L)
-                .retrieve();
+    @DisplayName("POST /v1/articles ArticleCreateRequest null")
+    public void 새로운_게시글을_400에서() throws Exception {
+        // given
+        // when
+        ApiResponse<ArticleResponse> rtn = articleApiCaller.createArticle(null, 400);
+
+        // then
+        Assertions.assertThat(rtn.getCode()).isEqualTo(400);
     }
 
-//    @Test
-//    void readAllTest() {
-//        ArticlePageResponse response = restClient.get()
-//                .uri("/v1/articles?boardId=1&pageSize=30&page=50000")
-//                .retrieve()
-//                .body(ArticlePageResponse.class);
-//
-//        System.out.println("response.getArticleCount() = " + response.getArticleCount());
-//        for (ArticleResponse article : response.getArticles()) {
-//            System.out.println("articleId = " + article.getArticleId());
-//        }
-//    }
-//
-//    @Test
-//    void readAllInfiniteScrollTest() {
-//        List<ArticleResponse> articles1 = restClient.get()
-//                .uri("/v1/articles/infinite-scroll?boardId=1&pageSize=5")
-//                .retrieve()
-//                .body(new ParameterizedTypeReference<List<ArticleResponse>>() {
-//                });
-//
-//        System.out.println("firstPage");
-//        for (ArticleResponse articleResponse : articles1) {
-//            System.out.println("articleResponse.getArticleId() = " + articleResponse.getArticleId());
-//        }
-//
-//        Long lastArticleId = articles1.getLast().getArticleId();
-//        List<ArticleResponse> articles2 = restClient.get()
-//                .uri("/v1/articles/infinite-scroll?boardId=1&pageSize=5&lastArticleId=%s".formatted(lastArticleId))
-//                .retrieve()
-//                .body(new ParameterizedTypeReference<List<ArticleResponse>>() {
-//                });
-//
-//        System.out.println("secondPage");
-//        for (ArticleResponse articleResponse : articles2) {
-//            System.out.println("articleResponse.getArticleId() = " + articleResponse.getArticleId());
-//        }
-//    }
-//
-//    @Test
-//    void countTest() {
-//        ArticleResponse response = create(new ArticleCreateRequest("hi", "content", 1L, 2L));
-//
-//        Long count1 = restClient.get()
-//                .uri("/v1/articles/boards/{boardId}/count", 2L)
-//                .retrieve()
-//                .body(Long.class);
-//        System.out.println("count1 = " + count1); // 1
-//
-//        restClient.delete()
-//                .uri("/v1/articles/{articleId}", response.getArticleId())
-//                .retrieve();
-//
-//        Long count2 = restClient.get()
-//                .uri("/v1/articles/boards/{boardId}/count", 2L)
-//                .retrieve()
-//                .body(Long.class);
-//        System.out.println("count2 = " + count2); // 0
-//    }
 }
