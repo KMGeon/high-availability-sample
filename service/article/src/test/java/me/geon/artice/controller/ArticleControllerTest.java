@@ -3,6 +3,8 @@ package me.geon.artice.controller;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.geon.artice.config.WebTestConfigure;
+import me.geon.artice.service.request.ArticleCreateRequest;
+import me.geon.artice.service.request.ArticleUpdateRequest;
 import me.geon.artice.service.response.ArticleResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestClient;
@@ -14,10 +16,7 @@ class ArticleControllerTest extends WebTestConfigure {
 
     @Test
     void createTest() {
-        ArticleResponse response = create(new ArticleCreateRequest(
-                "hi", "my content", 1L, 1L
-        ));
-        System.out.println("response = " + response);
+
     }
 
     ArticleResponse create(ArticleCreateRequest request) {
@@ -51,7 +50,6 @@ class ArticleControllerTest extends WebTestConfigure {
     void update(Long articleId) {
         restClient.put()
                 .uri("/v1/articles/{articleId}", articleId)
-                .body(new ArticleUpdateRequest("hi 2", "my content 22"))
                 .retrieve();
     }
 
@@ -121,21 +119,4 @@ class ArticleControllerTest extends WebTestConfigure {
 //                .body(Long.class);
 //        System.out.println("count2 = " + count2); // 0
 //    }
-
-
-    @Getter
-    @AllArgsConstructor
-    static class ArticleCreateRequest {
-        private String title;
-        private String content;
-        private Long writerId;
-        private Long boardId;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    static class ArticleUpdateRequest {
-        private String title;
-        private String content;
-    }
 }

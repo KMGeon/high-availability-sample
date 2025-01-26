@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +37,10 @@ public class ArticleService {
         return ArticleResponse.from(article);
     }
 
+    @Transactional(readOnly = true)
     public ArticleResponse read(Long articleId) {
-        return ArticleResponse.from(articleRepository.findById(articleId).orElseThrow());
+        return ArticleResponse.from(articleRepository.findById(articleId)
+                .orElseThrow(() -> new NoSuchElementException(String.format("Article with id '%d' not found", articleId))));
     }
 
     @Transactional
@@ -45,6 +48,7 @@ public class ArticleService {
         articleRepository.deleteById(articleId);
     }
 
+    @Transactional(readOnly = true)
     public ArticlePageResponse readAll(Long boardId, Long page, Long pageSize) {
         return ArticlePageResponse.of(
                 articleRepository.findAll(boardId, (page - 1) * pageSize, pageSize).stream()
@@ -57,16 +61,11 @@ public class ArticleService {
         );
     }
 
+    @Transactional(readOnly = true)
     public List<ArticleResponse> readAllInfiniteScroll(Long boardId, Long pageSize, Long lastArticleId) {
         List<Article> articles = lastArticleId == null ?
                 articleRepository.findAllInfiniteScroll(boardId, pageSize) :
                 articleRepository.findAllInfiniteScroll(boardId, pageSize, lastArticleId);
         return articles.stream().map(ArticleResponse::from).toList();
     }
-
-//    public Long count(Long boardId) {
-//        return boardArticleCountRepository.findById(boardId)
-//                .map(BoardArticleCount::getArticleCount)
-//                .orElse(0L);
-//    }
 }

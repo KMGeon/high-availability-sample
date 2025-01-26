@@ -24,8 +24,7 @@ public class TestConfig {
         return FixtureMonkey.builder()
                 .objectIntrospector(new FailoverIntrospector(Arrays.asList(
                         FieldReflectionArbitraryIntrospector.INSTANCE,
-                        BeanArbitraryIntrospector.INSTANCE,
-                        BuilderArbitraryIntrospector.INSTANCE
+                        BeanArbitraryIntrospector.INSTANCE
                 )))
                 .defaultNotNull(true)
                 .plugin(
