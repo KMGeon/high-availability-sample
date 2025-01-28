@@ -1,2 +1,22 @@
 server:
   port: 9002
+
+spring:
+  application:
+    name: board-like-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/KMG?serverTimezone=Asia/Seoul
+    username: root
+    password: 1234
+
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+#        format_sql: true
+        default_batch_fetch_size: 100
