@@ -1,5 +1,6 @@
-package me.geon.comment.domain;
+package me.geon.comment.entity;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -10,39 +11,39 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
-@Table(name = "comment")
+@Table(name = "comment_v2")
 @Getter
 @Entity
-//@ToString(exclude = {"boardId"})
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class CommentV2 {
     @Id
     private Long commentId;
     private String content;
-    private Long parentCommentId;
-    private Long articleId;
+    private Long articleId; // shard key
     private Long writerId;
+    @Embedded
+    private CommentPath commentPath;
     private Boolean deleted;
     private LocalDateTime createdAt;
 
-    public static Comment create(Long commentId, String content, Long parentCommentId, Long articleId, Long writerId, Boolean deleted, LocalDateTime createdAt) {
-        Comment comment = new Comment();
+    public static CommentV2 create(Long commentId, String content, Long articleId, Long writerId, CommentPath commentPath) {
+        CommentV2 comment = new CommentV2();
         comment.commentId = commentId;
         comment.content = content;
-        comment.parentCommentId = parentCommentId == null ? commentId : parentCommentId;
         comment.articleId = articleId;
         comment.writerId = writerId;
+        comment.commentPath = commentPath;
         comment.deleted = false;
         comment.createdAt = LocalDateTime.now();
         return comment;
     }
 
     public boolean isRoot() {
-        return parentCommentId.longValue() == commentId;
+        return commentPath.isRoot();
     }
 
-    public void delete(){
+    public void delete() {
         deleted = true;
     }
 }
