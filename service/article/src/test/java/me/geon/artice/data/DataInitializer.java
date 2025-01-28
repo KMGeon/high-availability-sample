@@ -29,7 +29,8 @@ public class DataInitializer {
     static final int EXECUTE_COUNT = 600;
 
 
-    public void initialize() throws InterruptedException {
+    @Test
+     void initialize() throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         for(int i = 0; i < EXECUTE_COUNT; i++) {
             executorService.submit(() -> {
