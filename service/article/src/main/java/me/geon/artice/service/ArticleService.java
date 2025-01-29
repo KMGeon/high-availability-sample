@@ -7,10 +7,14 @@ import me.geon.artice.service.request.ArticleCreateRequest;
 import me.geon.artice.service.request.ArticleUpdateRequest;
 import me.geon.artice.service.response.ArticlePageResponse;
 import me.geon.artice.service.response.ArticleResponse;
+import me.geon.event.EventType;
+import me.geon.event.payload.ArticleCreatedEventPayload;
+import me.geon.outboxmessagerelay.OutboxEventPublisher;
 import me.geon.snowflake.Snowflake;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -19,6 +23,7 @@ import java.util.NoSuchElementException;
 public class ArticleService {
     private final Snowflake snowflake = new Snowflake();
     private final ArticleRepository articleRepository;
+    private final OutboxEventPublisher outboxEventPublisher;
 
     @Transactional
     public ArticleResponse create(ArticleCreateRequest request, final long id) {
@@ -27,6 +32,22 @@ public class ArticleService {
                         request.getContent(), request.getBoardId(),
                         request.getWriterId())
         );
+
+
+        outboxEventPublisher.publish(
+                EventType.ARTICLE_CREATED,
+                ArticleCreatedEventPayload.builder()
+                        .articleId(article.getArticleId())
+                        .title(article.getTitle())
+                        .content(article.getContent())
+                        .boardId(article.getBoardId())
+                        .writerId(article.getWriterId())
+                        .createdAt(article.getCreatedAt())
+                        .modifiedAt(article.getModifiedAt())
+                        .boardArticleCount(1L)
+                        .build()
+        );
+
         return ArticleResponse.from(article);
     }
 
@@ -68,4 +89,5 @@ public class ArticleService {
                 articleRepository.findAllInfiniteScroll(boardId, pageSize, lastArticleId);
         return articles.stream().map(ArticleResponse::from).toList();
     }
+
 }
