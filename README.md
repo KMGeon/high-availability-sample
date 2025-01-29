@@ -15,19 +15,3 @@
 3. 각 DB는 트래픽에 대해서 Scale out을 위해 샤딩을 한다고 가정하며 각 샤드는 논리적 샤드로 처리된다.
 4. 이후 MVC 패턴으로 개발한 이유 클린 아키텍처를 적용하여 개발한다.
 5. 모든 테스트는 작성하며 최소한의 Mocking을 처리한다.
-
-
-## 1. 게시판
-
-```sql
-private Long articleId;
-private String title;
-private String content;
-private Long boardId; // shard key
-private Long writerId;
-private LocalDateTime createdAt;
-private LocalDateTime modifiedAt;
-```
-
-### 1-2. 설계
-- 
